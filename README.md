@@ -55,13 +55,14 @@ Move downloaded bzImages to images/bzimages
 Download our IODA VM image here: [link to IODA VM image]
 Move downloaded VM image to images/
 
-        $ mv ioda.qcow2 images/
+    $ mv ioda.qcow2 images/
 
 Download our run script here: [link to ioda.sh]
 Download result processing scripts here: [link to rtk]
 
 At this point directory hierarchy should be like this:
 
+```
 images
 ├── bzimages
 │   ├── bzImage
@@ -70,10 +71,7 @@ images
 iodaFEMU
 ioda.sh
 rtk
-
-
-
-
+```
 
 2.  
 
