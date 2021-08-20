@@ -1,0 +1,6 @@
+[submodule "src/iodaFEMU"]
+	path = src/iodaFEMU
+	url = git@github.com:huaicheng/iodaFEMU.git
+[submodule "src/iodaLinux"]
+	path = src/iodaLinux
+	url = git@github.com:huaicheng/iodaLinux.git
