@@ -2,7 +2,6 @@
 The IODA README link:
 https://docs.google.com/document/d/1uvWwgCik9uFjmT2ZhTNeJ9tQ5G7Rurvqq5w8Cg27Ujw/edit
 
-
 # IODA Artifact #
 
 ### Overview of the Artifact
@@ -11,11 +10,15 @@ IODA artifact includes the following components:
 
 - ``iodaFEMU``: IODA-enhanced SSD controller
 - ``iodaLinux``: IODA-enahnced Linux kernel
-- ``iodaScripts``: Utilities to run IODA experiments
+- ``iodaVM``: a QEMU VM image hosting utilities to run IODA experiments
 
+All the experiments will run inside the ``iodaVM``, where it uses ``iodaLinux``
+as the guest OS and manages a NVMe SSD exposed by ``iodaFEMU``. 
 
-All the experiments will run inside a VM, where we use ``iodaLinux`` as the
-guest OS and manages a NVMe SSD exposed by ``iodaFEMU``.
+### Expectations ###
+
+- This artifact is mainly setup for reproducing ``Figure 5`` (and
+  correspondingly ``Figure 6``) in our submission. In total, 
 
 
 To simplify the evaluation process, we provide the binary
@@ -29,9 +32,11 @@ Artifact repo: https://github.com/huaicheng/IODA-SOSP21-AE.git
 To build FEMU (tested on ucare-10)
 clone the following FEMU version:
 
+```
 $ git clone https://github.com/huaicheng/iodaFEMU.git
 $ cd iodaFEMU
 $ git checkout 49b768b
+```
 
 Create build directory and copy installation scripts
 
