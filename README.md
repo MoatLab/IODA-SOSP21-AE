@@ -10,24 +10,77 @@ IODA artifact includes the following components:
 
 - ``iodaFEMU``: IODA-enhanced SSD controller
 - ``iodaLinux``: IODA-enahnced Linux kernel
-- ``iodaVM``: a QEMU VM image hosting utilities to run IODA experiments
+- ``iodaVM``: a QEMU VM image hosting utilities to run IODA experiments (ucare-07.cs.uchicago.edu:/home/martin/images)
 
-All the experiments will run inside the ``iodaVM``, where it uses ``iodaLinux``
+All the experiments will run inside ``iodaVM``, where it uses ``iodaLinux``
 as the guest OS and manages a NVMe SSD exposed by ``iodaFEMU``. 
 
-### Expectations ###
+### Foreword ###
 
 - This artifact is mainly setup for reproducing ``Figure 5`` (and
-  correspondingly ``Figure 6``) in our submission. In total, 
+  correspondingly ``Figure 6``) in our submission, which contains IODA results
+  of 9 trace workloads, each under 6 IODA modes (``Base``, ``IOD_1``,
+  ``IOD_2``, ``IOD_3``, ``IODA``, and ``Ideal``)
+
+- To simplify the evaluation process, we **encourage** you to use our
+  pre-compiled binary files of ``iodaFEMU`` and ``iodaLinux`` to save
+  compilation time. We also provide compilation instructions for those
+  interested.
+
+- All the experiments were done on ``Emulab D430`` machines, with ``Ubuntu
+  16.04.1 LTS``
+
+- Estimated time to finish all these experiments: ``10 hours``
+
+### Detailed Steps
+
+0. Prepare the server: Setup an Emulab D430 server, ssh into it. [Martin: TODO]
+
+1. Prepare
 
 
-To simplify the evaluation process, we provide the binary
+Clone the repo: ``git clone https://github.com/huaicheng/IODA-AE.git``
 
 
+Download linux kernel bzImages here: [link to bzImage and bzImage-ioda]
+Create directory images and images/bzimages
+
+    $ mkdir -p images/bzimages
+
+Move downloaded bzImages to images/bzimages
+
+    $ mv bzImage images/bzimages
+    $ mv bzImage-ioda images/bzimages
+
+Download our IODA VM image here: [link to IODA VM image]
+Move downloaded VM image to images/
+
+        $ mv ioda.qcow2 images/
+
+Download our run script here: [link to ioda.sh]
+Download result processing scripts here: [link to rtk]
+
+At this point directory hierarchy should be like this:
+
+images
+├── bzimages
+│   ├── bzImage
+│   └── bzImage-ioda
+└── ioda.qcow2
+iodaFEMU
+ioda.sh
+rtk
+
+
+
+
+
+2.  
+
+
+- 
 
 IODA environment setup (prerequisite installations and download the IODA VM images):
-
-Artifact repo: https://github.com/huaicheng/IODA-SOSP21-AE.git
 
 To build FEMU (tested on ucare-10)
 clone the following FEMU version:
@@ -58,34 +111,6 @@ Go out of iodaFEMU directory
 
     $ cd ../../
 
-Download linux kernel bzImages here: [link to bzImage and bzImage-ioda]
-Create directory images and images/bzimages
-
-    $ mkdir -p images/bzimages
-
-Move downloaded bzImages to images/bzimages
-
-    $ mv bzImage images/bzimages
-    $ mv bzImage-ioda images/bzimages
-
-Download our IODA VM image here: [link to IODA VM image]
-Move downloaded VM image to images/
-
-        $ mv ioda.qcow2 images/
-
-Download our run script here: [link to ioda.sh]
-Download result processing scripts here: [link to rtk]
-
-At this point directory hierarchy should be like this:
-
-images
-├── bzimages
-│   ├── bzImage
-│   └── bzImage-ioda
-└── ioda.qcow2
-iodaFEMU
-ioda.sh
-rtk
 
 
 FEMU:
