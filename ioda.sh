@@ -4,7 +4,7 @@ IODA_IMGDIR="./images/"
 IODA_KERNEL=images/bzimages/bzImage
 
 sudo iodaFEMU/build-femu/x86_64-softmmu/qemu-system-x86_64 \
-    -name "tifaVM" \
+    -name "iodaVM" \
     -cpu host \
     -smp 24 \
     -m 16G \
