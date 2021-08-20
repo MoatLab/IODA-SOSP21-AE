@@ -1,0 +1,60 @@
+#!/bin/bash
+
+BIN="/home/huaicheng/tifa/bin"
+
+# reset counters
+if [[ $1 == "reset" ]]; then
+    echo ""
+    echo "===> Reset all TIFA related logs / counters"
+    echo ""
+    echo /dev/null | sudo tee /var/log/kern.log
+    echo /dev/null | sudo tee /var/log/syslog
+
+    ${BIN}/rstcnt
+
+    echo 0 | sudo tee /sys/block/md0/stat
+    for i in 0 1 2 3; do echo 0 | sudo tee /sys/block/nvme${i}n1/stat; done
+
+    #ssh u9 "cd ~/git/tifaFEMU/build-tifa; echo > log"
+
+    echo ""
+    echo "Done!"
+    echo ""
+    exit
+fi
+
+# the folder where we store various internal metrics
+exp=internal-metrics/$1
+
+if [[ $# != 1 ]]; then
+    echo ""
+    echo "Usage: ./tifa <exp-folder>|reset"
+    echo ""
+    exit
+fi
+
+# Erase existing metrics 
+sudo rm -rf $exp
+if [[ ! -e $exp ]]; then
+    mkdir $exp
+fi
+
+echo "========start-TIFAcnt================"
+${BIN}/getcnt > $exp/tifa-counters.txt
+
+echo "========start-diskstat==============="
+grep 'nvme[0-3]n1\|md0' /proc/diskstats > $exp/diskstats.txt
+
+echo "========start-kernlog==============="
+sudo cat /var/log/kern.log > $exp/kern.log
+sudo chown huaicheng:huaicheng $exp/kern.log
+
+echo "========start-femulog==============="
+
+# The experiment scripts
+mkdir $exp/exp_scripts/
+cp r.sh $exp/exp_scripts/
+
+echo ""
+echo "Collected TIFA logs into ${exp}/"
+echo ""
