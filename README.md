@@ -29,14 +29,15 @@ as the guest OS and manages a NVMe SSD exposed by ``iodaFEMU``.
   - If you use different servers, please make sure the server has at least 32
     cores, 64GB DRAM, and 80GB disk space
 
-- Estimated time to finish all these experiments: ``1 hours``
+- Estimated time to finish all these experiments: ``2 hours``
 
 ### Detailed Steps
 
-0. Prepare the server: Setup an Emulab D430 server, ssh into it. [Martin: TODO]
+0. Prepare the server: Setup an Emulab D430 server, ssh into it. If you don't
+   have Emulab access, please let us know and we can help spin up a server for
+   you using our account and give you access to it.
 
 1. Prepare the IODA environment
-
 
 Clone the repo and download IODA VM image file: 
 
@@ -88,7 +89,7 @@ $ ssh -p22 <user>@<machine>.emulab.net
 Start IODA VM and enter the guest OS:
 
 ```
-cd ioda/sosp21/
+cd $IODA_AE_TOPDIR
 ./ioda.sh
 ```
 
@@ -103,7 +104,11 @@ After the VM is up, we can connect to the VM using the following account
 Furthermore, the provided image allows passwordless ssh if we run it on emulab.
 Thus we can ssh into our VM using the following command:
 
+```
 $ ssh -p10101 huaicheng@localhost
+```
+
+**Note: From here, all the operations are done in the VM.**
 
 By default we will enter /home/huaicheng/tifa/replayer directory:
 
@@ -167,15 +172,15 @@ have provided the bzImage. To do this, shutdown the VM:
 sudo shutdown -h now
 ```
 
+**Note: Up to here, we are exiting the VM and back to the host.**
+
 This will bring us back to the host side. Open ioda.sh
 
+```
 $ vi ioda.sh
+```
+Change the ``IODA_KERNEL`` line to point to the correct bzImage
 
-Then, comment out line 10 and uncomment line 11.
-
-Before: TODO
-
-After: TODO
 
 Repeat the above steps for all traces and policies we need to run other workloads.
 
@@ -185,7 +190,7 @@ Repeat the above steps for all traces and policies we need to run other workload
 After all is VM-side experiment is done, switch to host and go to rtk directory:
 
 ```
-$ cd sosp21/rtk
+$ cd $IODA_AE_TOPDIR/rtk
 ```
 
 Make sure the VM is still up.
@@ -226,10 +231,6 @@ Adjust the file which we want to plot on the ``'plot \'`` section.
 E.g. For TPCC, if we want to plot the 1st run of all policies, change every '<long_string>-X-rd_lat.dat' to '<long_string>1-rd_lat.dat'.
 
 The resulting graph will be in folder ``eps/``. Check the graph and tune its xlim, ylim, etc as desired.
-
-
-
-
 
 
 --------------------------------------------------------------------------------
