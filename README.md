@@ -42,8 +42,8 @@ as the guest OS and manages a NVMe SSD exposed by ``iodaFEMU``.
 Clone the repo and download IODA VM image file: 
 
 ```
-git clone https://github.com/huaicheng/IODA-AE.git
-cd IODA-AE
+git clone https://github.com/huaicheng/IODA-SOSP21-AE.git
+cd IODA-SOSP21-AE
 export IODA_AE_TOPDIR=$(pwd)
 cd images
 ./download-ioda-vm-image.sh
@@ -68,7 +68,7 @@ At this point directory hierarchy should be like this:
 2. Install IODA dependencies
 
 ```
-$ sudo ./pkgdep.sh
+$ sudo ./scripts/pkgdep.sh
 ```
 
 3. Running the Experiments
