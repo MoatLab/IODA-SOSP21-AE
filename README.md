@@ -6,7 +6,7 @@
 IODA artifact includes the following components:
 
 - ``iodaFEMU``: IODA-enhanced SSD controller
-- ``iodaLinux``: IODA-enahnced Linux kernel
+- ``iodaLinux``: IODA-enahnced Linux kernel (based on Linux v4.15)
 - ``iodaVM``: a QEMU VM image hosting utilities to run IODA experiments (ucare-07.cs.uchicago.edu:/home/martin/images)
 
 All the experiments will run inside ``iodaVM``, where it uses ``iodaLinux``
@@ -25,7 +25,7 @@ as the guest OS and manages a NVMe SSD exposed by ``iodaFEMU``.
   interested.
 
 - All the experiments were done on ``Emulab D430`` machines, with ``Ubuntu
-  16.04.1 LTS, GCC: 5.4.0``
+  16.04.1 LTS, GCC: 5.4.0`` and ``Ubuntu 20.04 LTS, GCC: 9.3.0``.
   - If you use different servers, please make sure the server has at least 32
     cores, 64GB DRAM, and 80GB disk space
 
@@ -33,9 +33,9 @@ as the guest OS and manages a NVMe SSD exposed by ``iodaFEMU``.
 
 ### Detailed Steps
 
-0. Prepare the server: Setup an Emulab D430 server, ssh into it. If you don't
-   have Emulab access, please let us know and we can help spin up a server for
-   you using our account and give you access to it.
+0. Prepare the physical server: Setup an Emulab D430 server, ssh into it. If
+   you don't have Emulab access, please let us know on hotcrp and we can help
+   spin up a server under our account and provide you the access.
 
 1. Prepare the IODA environment
 
@@ -65,11 +65,17 @@ At this point directory hierarchy should be like this:
     └── iodaLinux
 ```
 
-2. Install IODA dependencies
+2. Build IODA
 
 ```
-$ sudo ./scripts/pkgdep.sh
+$ sudo ./build-ioda.sh
 ```
+
+This script will install IODA dependencies, build iodaFEMU and iodaLinux.
+The compiled binaries are:
+
+- iodaFEMU: ``src/iodaFEMU/build-femu/x86_64-softmmu/qemu-system-x86_64``
+- iodaLinux: ``src/iodaLinux/arch/x86/boot/bzImage``
 
 3. Running the Experiments
 
