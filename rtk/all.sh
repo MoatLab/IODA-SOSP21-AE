@@ -37,7 +37,9 @@ TARGET=$INP_TARGET
 TYPE="lat-cdf"
 
 # only needed when generating dat files
-$SCRIPTDIR/raw2dat.sh $TYPE $TARGET 0 1 0.0001
+if [[ -n $(ls -l raw/$TARGET | grep ".log") ]]; then
+    $SCRIPTDIR/raw2dat.sh $TYPE $TARGET 0 1 0.0001
+fi
 
 # generate plot file first
 #$SCRIPTDIR/genplot.sh $TARGET $TYPE
