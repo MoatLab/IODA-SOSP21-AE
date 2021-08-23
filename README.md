@@ -7,7 +7,7 @@ IODA artifact includes the following components:
 
 - ``iodaFEMU``: IODA-enhanced SSD controller
 - ``iodaLinux``: IODA-enahnced Linux kernel (based on Linux v4.15)
-- ``iodaVM``: a QEMU VM image hosting utilities to run IODA experiments (ucare-07.cs.uchicago.edu:/home/martin/images)
+- ``iodaVM``: a QEMU VM image hosting utilities to run IODA experiments
 
 All the experiments will run inside ``iodaVM``, where it uses ``iodaLinux``
 as the guest OS and manages a NVMe SSD exposed by ``iodaFEMU``. 
@@ -20,41 +20,46 @@ as the guest OS and manages a NVMe SSD exposed by ``iodaFEMU``.
   ``IOD_2``, ``IOD_3``, ``IODA``, and ``Ideal``)
 
 - To simplify the evaluation process, we **encourage** you to use our
-  pre-compiled binary files of ``iodaFEMU`` and ``iodaLinux`` to save
-  compilation time. We also provide compilation instructions for those
-  interested.
+  pre-compiled Linux kernel bzIImage of ``iodaLinux`` (the default Linux kernel
+  used with ``iodaVM``) to save time. 
 
-- All the experiments were done on ``Emulab D430`` machines, with ``Ubuntu
-  16.04.1 LTS, GCC: 5.4.0`` and ``Ubuntu 20.04 LTS, GCC: 9.3.0``.
-  - If you use different servers, please make sure the server has at least 32
-    cores, 64GB DRAM, and 80GB disk space
+- All the experiments are done on ``Emulab D430`` nodes, tested under ``Ubuntu
+  16.04.1 LTS, GCC: 5.4.0`` and ``Ubuntu 20.04 LTS, GCC: 9.3.0`` (recommended).
+  - If you choose to use other types of servers, please make sure it has at
+    least 32 cores, 64GB DRAM, and 80GB disk space, and better stick to a
+    similar host OS environment as mentioned above.
 
-- Estimated time to finish all these experiments: ``2 hours``
+- Estimated time to finish all these experiments: ``10-20 hours``
+
+**To showcase the steps to setup and run IODA experiments, please refer to our
+screencast at http://XXXX. We encourage you to watch the video first before
+following the detailed instructions below.**
 
 ### Detailed Steps
 
 0. Prepare the physical server: Setup an Emulab D430 server, ssh into it. If
-   you don't have Emulab access, please let us know on hotcrp and we can help
-   spin up a server under our account and provide you the access.
+   you don't have Emulab/CloudLab access, please let us know on hotcrp and we
+   can help spin up a server under our account and provide you the access.
 
 1. Prepare the IODA environment
 
 Clone the repo and download IODA VM image file: 
 
 ```
+mkdir -p ~/git
+cd ~/git
 git clone https://github.com/huaicheng/IODA-SOSP21-AE.git
-cd IODA-SOSP21-AE
+ln -s IODA-SOSP21-AE ae
+cd ae
 export IODA_AE_TOPDIR=$(pwd)
 cd images
 ./download-ioda-vm-image.sh
+cd ${IODA_AE_TOPDIR}
 ```
 At this point directory hierarchy should be like this:
 
 ```
 ├── README.md                                    # README with detailed instructions
-├── bin
-│   ├── iodaFemuBin                              # Pre-compiled IODA FEMU executable file
-│   └── iodaLinuxBin                             # Pre-compiled IODA Linux kernel image
 ├── images
 │   ├── download-ioda-vm-image.sh
 │   └── ioda.qcow2                               # IODA VM image file
@@ -65,13 +70,13 @@ At this point directory hierarchy should be like this:
     └── iodaLinux
 ```
 
+
 2. Build IODA
 
 ```
-$ sudo ./build-ioda.sh
+$ sudo ./build.sh
 ```
-
-This script will install IODA dependencies, build iodaFEMU and iodaLinux.
+This script will install IODA dependencies, and build iodaFEMU and iodaLinux.
 The compiled binaries are:
 
 - iodaFEMU: ``src/iodaFEMU/build-femu/x86_64-softmmu/qemu-system-x86_64``
@@ -79,200 +84,44 @@ The compiled binaries are:
 
 3. Running the Experiments
 
-First of all, to showcase how to run IODA experiments, please refer to our
-screencast at http://XXXX to get an idea about each steps.
-
-1) Steps to run the experiment:
-
-Login to machine (suppose emulab using Martin's account)
-
-We will spin a few Emulab servers for you to use if needed, please let us know.
+1) Start IODA VM and enter the guest OS:
 
 ```
-$ ssh -p22 <user>@<machine>.emulab.net
-```
-
-Start IODA VM and enter the guest OS:
-
-```
-cd $IODA_AE_TOPDIR
+cd ${IODA_AE_TOPDIR}
 ./ioda.sh
 ```
 
 FEMU will start booting and keep printing output for about 30-60 seconds. Once
-it is done, our VM will be available at localhost port 10101.
-
-After the VM is up, we can connect to the VM using the following account
+the guest OS is up, ssh into it using the following account
 
     username: huaicheng
     password: ii
 
-Furthermore, the provided image allows passwordless ssh if we run it on emulab.
-Thus we can ssh into our VM using the following command:
+Specifically, do the following
 
 ```
 $ ssh -p10101 huaicheng@localhost
+# then input the password
 ```
 
-**Note: From here, all the operations are done in the VM.**
+**Note: From now on, all the operations are done in the VM.**
 
-By default we will enter /home/huaicheng/tifa/replayer directory:
-
-Our main script is ``r.sh``. It automates all the steps we need, including
-
-- Create RAID-5 array using 4 FEMU NVMe SSDs
-- Warmup the array to make it reach steady-state, such that further workload
-  will trigger garbage collection
-- Run trace Azure,[BingIdx,BingSel,Cosmos,DTRS,Exch,LMBE,MSNFS,TPCC] using the
-  base,[iod1, iod2, iod3, ioda, ideal] policy N times Collect and preprocess IO
-  latencies and various metrics.
-- Organize output latency logs in directories for easy download from the host
-  side.
-
-- Regarding ``r.sh``, Line 12 to change traces (e.g. run tpcc and exchange)
-
-tfs="tpcc-resize-w16.0-20s est-trim-s2700-e3300"
-
-The Complete list of traces used:
+We provide some automation scripts in the VM to simplify the process to run the
+experiments:
 
 ```
-Trace Filename
-Azure azurestorage-drive2.trace-trim-s350-e530-rerate-0.25-resize-w16.0
-BingSelection bingselection-drive2.trace-trim-s200-e260-resize-w2.0-r2.0
-BingIndex bingindex-drive2.trace-trim-s6300-e6600-rerate-2.0-resize-w4.0
-Cosmos cosmos-drive2.trace-trim-s1890-e2000
-DTRS dtrs-frankenstein2
-Exchange est-trim-s2700-e3300
-LMBE lmbe-resize-r0.25-w3.0-trim-s1600-e1660
-MSNFS msnfs10-20s
-TPCC tpcc-resize-w16.0-20s
+$ cd iodaExp
+$ source ioda-env.sh # setup IODA env variables
+$ cd traceExp
+$ ss # this will create an RAID-5 array and age the FEMU SSDs
+
+$ source r.sh # r.sh defines several functions to run experiments in batch, check it out
+
+# A test run, let's run a "test" workload under all IODA modes, after it finishes, the latency log files are under "sosp21-ae-rst/"
+$ run_sgl_all test
+
+# Now, to run all experiments in batch: (this will take >10hours to finish, please wait patiently)
+$ run_bat_all 
+
+# After it finishes, similar check all the raw latency logs under "sosp21-ae-rst" and use them for plotting
 ```
-
-- Modify Line 13 to change number of runs for each {trace,policy} (e.g. run the {trace,policy} 3 times)
-``nums="1 2 3"``
-
-- Line 27 to change policy (e.g. run base and iod-1) ``for i in "nopgc nosync def" "nopgc nosync gct"; do``
-
-  - Complete list of existing policies:
-
-Policy Change in Script
-```
-base "nopgc nosync def"
-iod-1 "nopgc nosync ebusy"
-iod-2 "nopgc nosync gct"
-iod-3 "nopgc sync100ms gct"
-ioda "nopgc sync100ms ktw" (need to change kernel)
-ideal "nopgc nosync nogc"
-```
-
-After deciding the traces, policies, and number of runs, simply run the script:
-
-```
-$ ./r.sh
-```
-
-We need to re-run FEMU using another kernel to use the ``IOD_3`` policy. We
-have provided the bzImage. To do this, shutdown the VM:
-
-```
-sudo shutdown -h now
-```
-
-**Note: Up to here, we are exiting the VM and back to the host.**
-
-This will bring us back to the host side. Open ioda.sh
-
-```
-$ vi ioda.sh
-```
-Change the ``IODA_KERNEL`` line to point to the correct bzImage
-
-
-Repeat the above steps for all traces and policies we need to run other workloads.
-
-
-- Plotting the Results
-
-After all is VM-side experiment is done, switch to host and go to rtk directory:
-
-```
-$ cd $IODA_AE_TOPDIR/rtk
-```
-
-Make sure the VM is still up.
-Download and process the experiment results. For all traces, run:
-
-```
-$ ./doscp.sh sosp21 <trace filename>
-```
-E.g. to download TPCC and LMBE results:
-
-```
-$ ./doscp.sh sosp21 tpcc-resize-w16.0-20s
-$ ./doscp.sh sosp21 lmbe-resize-r0.25-w3.0-trim-s1600-e1660
-```
-
-The script will:
-
-  - Download all results for a given trace.
-  - Create a CDF of latency for every {trace,policy,run} and put them in sosp21/rtk/dat folder.
-
-(optional) If the host machine is headless, most probably we need to move the results to a machine which has GUI. We only need to download the sosp/rtk/dat folder:
-
-    E.g. Download dat folder from emulab to local machine
-    rsync -azP -e 'ssh -p22' <user>@<emulab_machine>:<prefix>/sosp21/rtk/dat dat
-
-Make an empty plot and eps folder at the directory with dat.
-
-$ mkdir plot
-$ mkdir eps
-
-At this point the directory hierarchy should be similar to this:
-
-We use gnuplot to generate our graph. We can create our own plot file, but since it might be a bit cumbersome to tune the graph style, we provided several templates here:
-
-- TODO
-
-Adjust the file which we want to plot on the ``'plot \'`` section.
-E.g. For TPCC, if we want to plot the 1st run of all policies, change every '<long_string>-X-rd_lat.dat' to '<long_string>1-rd_lat.dat'.
-
-The resulting graph will be in folder ``eps/``. Check the graph and tune its xlim, ylim, etc as desired.
-
-
---------------------------------------------------------------------------------
-
-
-### Optinal steps to compile iodaFEMU and iodaLinux from scratch 
-
-- To build iodaFEMU and iodaLinux
-
-```
-$ cd $IODA_AE_TOPDIR/src/iodaFEMU
-$ git checkout 49b768b
-$ mkdir build-femu
-$ cd build-femu
-$ cp ../femu-scripts/femu-copy-scripts.sh .
-$ ./femu-copy-scripts.sh
-$ ./femu-compile.sh
-
-# After the above steps, the IODA FEMU binary will appear as build-femu/qemu-system-x86_64, to use it, change ``ioda.sh`` Line 5 to ``IODA_FEMU="src/iodaFEMU/build-femu/qemu-system-x86_64`` to this FEMU binary.
-```
-
-- To build ``iodaLinux`` kernel
-
-```
-$ cd $IODA_AE_TOPDIR/src/iodaLinux
-$ git checkout 900e39b
-$ cp ../ioda-config .config
-$ make oldconfig
-$ make -j32
-
-The kernel bzImage is under ``./arch/x86_64/boot/bzImage``
-```
-
-IODA: FEMU2.0/tw_and_proactive
-Commit:900e39b
-
-Other: iodaLinux/tifa-mk-415-base
-Commit: 197ee12
-

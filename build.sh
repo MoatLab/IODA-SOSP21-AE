@@ -1,9 +1,9 @@
 #!/bin/bash
 #
-# This script builds iodaFEMU and iodaLinux
-# Usage: ./build-ioda.sh
+# This script builds FEMU and Linux for IODA
+# Usage: ./build.sh
 #
-# Note: Please cd into IODA-SOSP21-AE/ first, and then run "./build-ioda.sh"
+# Note: Please cd into IODA-SOSP21-AE/ first, and then run "./build.sh"
 #
 
 IODA_TOPDIR=$(pwd)
@@ -30,7 +30,7 @@ sudo ./utils/ioda-pkgdep.sh >${IODA_BUILD_LOG} 2>&1
 echo ""
 echo "====> ${green}[2/3]${reset} Building iodaFEMU ..."
 echo ""
-cd src/iodaFEMU
+cd ${IODA_TOPDIR}/src/iodaFEMU
 mkdir -p build-femu
 cd build-femu
 make clean >/dev/null 2>&1
@@ -41,7 +41,7 @@ echo ""
 echo "====> ${green}[3/3]${reset} Building iodaLinux ..."
 echo "      Note: this is an optional step since we will use a pre-compiled version of the Linux rootfs in our VM image"
 echo ""
-cd ../../iodaLinux
+cd ${IODA_TOPDIR}/src/iodaLinux
 make clean >/dev/null 2>&1
 cp ioda-config .config
 make oldconfig >>${IODA_BUILD_LOG} 2>&1
@@ -50,6 +50,7 @@ cd ../../
 
 
 IODA_FEMU_BIN="src/iodaFEMU/build-femu/x86_64-softmmu/qemu-system-x86_64"
+NONIODA_FEMU_BIN="src/noniodaFEMU/build-femu/x86_64-softmmu/qemu-system-x86_64"
 IODA_LINUX_BIN="src/iodaLinux/arch/x86/boot/bzImage"
 
 if [[ -e ${IODA_FEMU_BIN} && -e ${IODA_LINUX_BIN} ]]; then
@@ -57,7 +58,8 @@ if [[ -e ${IODA_FEMU_BIN} && -e ${IODA_LINUX_BIN} ]]; then
     echo "===> ${green}Congrats${reset}, IODA is successfully built!"
     echo ""
     echo "Please check the compiled binaries:"
-    echo "  - iodaFEMU at [${blue}${IODA_FEMU_BIN}${reset}]"
+    echo "  - iodaFEMU at [${blue}${IODA_FEMU_BIN}${reset}] (only for running "ioda" mode experiments)"
+    echo "  - noniodaFEMU at [${blue}${NONIODA_FEMU_BIN}${reset}] (for running "base ideal iod1 iod2 iod3" mode experiments)"
     echo "  - iodaLinux rootfs at [${blue}${IODA_LINUX_BIN}${reset}]"
     echo ""
 
