@@ -1,0 +1,15 @@
+[global]
+ioengine=libaio
+direct=1
+group_reporting
+size=8G
+time_based
+runtime=3000
+filename=/mnt/bgw.file
+
+[single-write]
+rw=randwrite
+iodepth=8
+bs=4K
+;number_ios=1
+;offset=12K

@@ -1,0 +1,12 @@
+[global]
+ioengine=libaio
+direct=1
+group_reporting
+filename=/dev/md0
+
+[single-write]
+rw=write
+iodepth=1
+bs=4K
+number_ios=1
+offset=12K

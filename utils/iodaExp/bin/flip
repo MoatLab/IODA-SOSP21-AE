@@ -1,0 +1,37 @@
+#!/bin/bash
+#-------------------------------------------------------------------------------
+# Script to dynamically change (enable/disable) FEMU features
+#
+# Usage:
+#     flip [1-18]
+#
+# Huaicheng Li <lhcwhu@gmail.com>
+#-------------------------------------------------------------------------------
+
+
+DEV="/dev/nvme"
+FEMU_FLIP_CMD_OPCODE="0xef"
+
+cmd=$1
+
+if [[ $# != 1 ]]; then
+    echo ""
+    echo "Usage: ./flip $cmd"
+    echo "  1 : enable_gc_delay,      2 : disable_gc_delay"
+    echo "  3 : enable_delay_emu,     4 : disable_delay_emu"
+    echo "  5 : reset nvme counters"
+    echo "  6 : enable iolog,         7 : disable iolog"
+    echo "  8 : enable_gc_sync,       9 : disable_gc_sync"
+    echo "  10: enable_freeblk_log,   11: disable_freeblk_log"
+    echo "  12: tw=1sec,              13: tw=100ms"
+    echo "  14: tw=2sec,              15: tw=10ms"
+    echo "  16: tw=40ms,              17: tw=200ms"
+    echo "  18: tw=400ms"
+    echo "  24: enable_tw_only (IOD3) 25: disable_tw_only (IOD3)"
+    echo ""
+    exit
+fi
+
+for i in $(seq 0 3); do
+    sudo nvme admin-passthru --opcode=${FEMU_FLIP_CMD_OPCODE} --cdw10=${cmd} ${DEV}$i >/dev/null 2>&1
+done

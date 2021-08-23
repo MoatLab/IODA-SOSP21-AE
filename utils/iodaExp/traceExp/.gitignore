@@ -1,0 +1,15 @@
+gnore unimportant files
+*~
+*.out
+*.pyc
+
+# ignore res dir
+resources/
+
+# ignore input output dir
+out*
+in*
+
+ronald/
+traces/
+dynamic-bingselection-drive2.trace-trim-s55800-e56100-limit-iosize-r256-gc-wait-times.dat

@@ -1,0 +1,96 @@
+#!/bin/bash
+
+if [[ ! -x $(command -v flip) ]]; then
+    echo ""
+    echo "===> "flip" command not found, please setup IODA bin path first"
+    echo ""
+    exit
+fi
+
+# disablel GC delay emulation
+flip 2 >/dev/null 2>&1
+
+echo ""
+echo "==> [1/8] Disable FEMU delay-emulation + iolog"
+echo ""
+# disable delay emulation for steady state
+flip 4 >/dev/null 2>&1
+# disable io log
+flip 7 >/dev/null 2>&1
+# 0: for default read mode
+changeReadPolicy 0
+
+echo ""
+echo "==> [2/8] Creating RAID-5 array..."
+echo ""
+# create RAID 5
+mk-r5.sh >/dev/null 2>&1
+sleep 1
+
+echo ""
+echo "==> [3/8] Warming up the array to reach steady state (this might take 1-5 minutes)..."
+echo ""
+# run steadystate ssd workload
+sudo fio ${IODA_EXP_DIR}/ssd-steadystate.fio >/dev/null 2>&1
+#sudo fio ssd-seqfill.fio
+
+echo ""
+echo "==> [4/8] Enable FEMU delay emulation + iolog; Reset FEMU counters"
+echo ""
+# enable delay emulation
+flip 1 >/dev/null 2>&1
+flip 3 >/dev/null 2>&1
+# resume io log
+#flip 6
+
+# reset FEMU counters
+flip 5 >/dev/null 2>&1
+
+echo ""
+echo "==> [5/8] Reset IODA counters"
+echo ""
+# reset all IODA RAID-level counters
+rstcnt >/dev/null 2>&1
+
+echo ""
+echo "==> [6/8] Disable I/O merges"
+echo ""
+echo 2 | sudo tee /sys/block/md0/queue/nomerges >/dev/null 2>&1
+# disable block IO layer merges
+for i in 0 1 2 3; do
+    echo 2 | sudo tee /sys/block/nvme${i}n1/queue/nomerges >/dev/null 2>&1
+done
+
+echo ""
+echo "==> [7/8] Reset diskstats"
+echo ""
+# reset diskstats "/proc/diskstats", /sys/block/*/stat
+echo 0 | sudo tee /sys/block/md0/stat >/dev/null 2>&1
+for i in 0 1 2 3; do
+    echo 0 | sudo tee /sys/block/nvme${i}n1/stat >/dev/null 2>&1
+done
+
+grep 'nvme[0-3]n1\|md0' /proc/diskstats >/dev/null 2>&1
+
+echo ""
+echo "==> [8/8] Truncate kernel log"
+echo ""
+echo | sudo tee /var/log/kern.log >/dev/null 2>&1
+
+#echo "==> Truncate FEMU log"
+#ssh u9 "cd /home/huaicheng/git/tifaFEMU/build-tifa; echo > log"
+
+echo ""
+echo ""
+echo "-------------------------------------------------"
+echo "Great! FEMU Devices have reached steady state!"
+echo "-------------------------------------------------"
+echo ""
+echo "====> Now ready to run IODA experiments!"
+echo ""
+
+#sudo mkfs.ext4 /dev/md0
+#sudo mount /dev/md0 /mnt
+#sudo chown huaicheng:huaicheng /mnt -R
+
+sudo swapoff -a
