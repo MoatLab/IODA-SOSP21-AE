@@ -1,5 +1,5 @@
 set terminal postscript eps enhanced color font ",44"
-set output "eps3/all.eps"
+set output "eps/all.eps"
 set grid lt 1 lc 'gray' lw 1
 
 set boxwidth 1
