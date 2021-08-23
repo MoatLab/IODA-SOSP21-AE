@@ -17,7 +17,6 @@
 *.pch
 
 # Libraries
-*.lib
 *.a
 *.la
 *.lo
@@ -43,7 +42,6 @@
 *.pdb
 
 # Kernel Module Compile Results
-*.mod*
 *.cmd
 .tmp_versions/
 modules.order
@@ -55,4 +53,4 @@ dkms.conf
 
 ioda-build.log
 ioda-femu.log
-
+.DS_Store
