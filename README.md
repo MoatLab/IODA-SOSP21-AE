@@ -32,8 +32,8 @@ as the guest OS and manages a NVMe SSD exposed by ``iodaFEMU``.
 - Estimated time to finish all these experiments: ``10-20 hours``
 
 **To showcase the steps to setup and run IODA experiments, please refer to our
-screencast at http://XXXX. We encourage you to watch the video first before
-following the detailed instructions below.**
+screencast at https://asciinema.org/a/431726. We encourage you to watch the
+video first before following the detailed instructions below.**
 
 ### Detailed Steps
 
