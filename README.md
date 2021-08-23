@@ -127,3 +127,25 @@ $ run_bat_all
 
 # After it finishes, similarly check all the raw latency logs under "sosp21-ae-rst" and use them for plotting
 ```
+
+
+### Plotting
+
+The ``rtk`` contains scripts to plot the latency CDFs using ``gnuplot``. If the
+server you use for running IODA experiments doesn't have GUI, you could
+consider copying the ``rtk`` folder to a desktop Linux machine with ``gnuplot``
+installed.
+
+The ``rtk`` folder contains the latency percentile data used in the paper. To
+replot the graph, simply run ``cd rtk; gnuplot plot/all.plt``. The output
+figure is ``eps/all.eps``.
+
+After you have finished all the experiments, first copy out the corresponding
+read latency log files to ``rtk/raw/xxx``. For example, copy
+``tpcc-{base,iod1,iod2,iod3,ioda,ideal}-rd_lat.log`` from the IODA VM to
+``rtk/raw/tpcc/tpcc-{base,iod1,iod2,iod3,ioda,ideal}.log``.  Then, run ``cd
+rtk; ./all.sh tpcc`` to refresh the percentile data. Repeat this step for all
+the workloads. Then, ``gnuplot plot/all.plt`` again to generate the final
+figure. 
+
+Check ``eps/all.eps`` for the results.
