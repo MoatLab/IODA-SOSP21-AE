@@ -1,0 +1,9 @@
+azurestorage
+bingindex
+bingselect
+cosmos
+dtrs
+est
+lmbe
+msnfs
+tpcc
