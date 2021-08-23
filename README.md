@@ -86,7 +86,7 @@ The compiled binaries are:
 
 #### Run the Experiments
 
-1) Start IODA VM and enter the guest OS:
+First, start IODA VM and enter the guest OS:
 
 ```
 cd ${IODA_AE_TOPDIR}
@@ -125,5 +125,5 @@ $ run_sgl_all test
 # Now, to run all experiments in batch: (this will take >10hours to finish, please wait patiently)
 $ run_bat_all 
 
-# After it finishes, similar check all the raw latency logs under "sosp21-ae-rst" and use them for plotting
+# After it finishes, similarly check all the raw latency logs under "sosp21-ae-rst" and use them for plotting
 ```
