@@ -1,0 +1,26 @@
+#!/bin/bash
+
+DEV=/dev/nvme
+FEMU_FLIP_CMD_OPCODE=0xef
+
+FEMU_ENABLE_GC_DELAY=1
+FEMU_DISABLE_GC_DELAY=2
+FEMU_ENABLE_DELAY_EMU=3
+FEMU_DISABLE_DELAY_EMU=4
+FEMU_RESET_ACCT_CNT=5
+
+cmd=$1
+
+if [[ $# != 1 ]]; then
+    echo ""
+    echo "Usage: ./flip $cmd"
+    echo "    1: enable_gc_delay,  2: disable_gc_delay"
+    echo "    3: enable_delay_emu, 4: disable_delay_emu"
+    echo "    5: reset nvme counters, 6: enable iolog, 7: disable iolog"
+    echo ""
+    exit
+fi
+
+for i in $(seq 0 3); do
+    sudo nvme admin-passthru --opcode=$FEMU_FLIP_CMD_OPCODE --cdw10=$cmd ${DEV}$i
+done

@@ -1,0 +1,78 @@
+#!/bin/bash
+
+BIN=/home/huaicheng/tifa/bin
+
+echo ""
+echo "==> Disable FEMU delay-emulation + iolog"
+echo ""
+# disable delay emulation for steady state
+$BIN/flip 4
+# disable io log
+$BIN/flip 7
+# 0: for default read mode
+$BIN/changeReadPolicy 0
+
+echo ""
+echo "==> Running fio workloads to reach SSD Steady State .."
+echo ""
+# create RAID 5
+$BIN/mk-r5.sh
+sleep 1
+
+# run steadystate ssd workload
+sudo fio ssd-steadystate.fio
+
+
+
+echo ""
+echo "==> Enable FEMU delay emulation + iolog; Reset FEMU counters"
+echo ""
+# enable delay emulation
+$BIN/flip 3
+# resume io log
+$BIN/flip 6
+
+# reset FEMU counters
+$BIN/flip 5
+
+echo ""
+echo "==> Reset TIFA counters"
+echo ""
+# reset all TIFA counters
+$BIN/rstcnt
+
+echo ""
+echo "==> Disable io merges"
+echo ""
+echo 2 | sudo tee /sys/block/md0/queue/nomerges
+# disable block IO layer merges
+for i in 0 1 2 3; do
+    echo 2 | sudo tee /sys/block/nvme${i}n1/queue/nomerges
+done
+
+
+echo ""
+echo "==> Reset diskstats"
+echo ""
+# reset diskstats "/proc/diskstats", /sys/block/*/stat
+echo 0 | sudo tee /sys/block/md0/stat
+for i in 0 1 2 3; do
+    echo 0 | sudo tee /sys/block/nvme${i}n1/stat
+done
+
+grep 'nvme[0-3]n1\|md0' /proc/diskstats
+
+echo "==> Truncate kernel log"
+echo | sudo tee /var/log/kern.log
+
+#echo "==> Truncate FEMU log"
+#ssh u9 "cd /home/huaicheng/git/tifaFEMU/build-tifa; echo > log"
+
+echo ""
+echo ""
+echo "----------------------------------------"
+echo "FEMU Devices have reached steady state!"
+echo "----------------------------------------"
+echo ""
+echo "====> TODO: (1) changeReadPolicy"
+echo ""

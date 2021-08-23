@@ -33,6 +33,7 @@ echo ""
 cd ${IODA_TOPDIR}/src/iodaFEMU
 mkdir -p build-femu
 cd build-femu
+cp ../femu-scripts/femu-compile.sh .
 make clean >/dev/null 2>&1
 ./femu-compile.sh >>${IODA_BUILD_LOG} 2>&1
 

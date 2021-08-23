@@ -1,0 +1,36 @@
+Before running a workload, if you want to...
+To enable Synchronized GC, run flip 8 in the VM
+To disable Synchronized GC, run flip 9 in the VM
+To adjust how big this window is, run flip [12/13/14/15/16/17/18] in the VM
+So far, 100MS window looks best, but 40MS, 200MS, 400MS look okay as well
+
+Options for flip command are in nvme-core.c
+```c
+enum {
+    FEMU_ENABLE_GC_DELAY = 1,
+    FEMU_DISABLE_GC_DELAY = 2,
+
+    FEMU_ENABLE_DELAY_EMU = 3,
+    FEMU_DISABLE_DELAY_EMU = 4,
+
+    FEMU_RESET_ACCT = 5,
+    FEMU_ENABLE_LOG = 6,
+    FEMU_DISABLE_LOG = 7,
+
+    FEMU_SYNC_GC = 8,
+    FEMU_UNSYNC_GC = 9,
+
+    FEMU_ENABLE_LOG_FREE_BLOCKS = 10,
+    FEMU_DISABLE_LOG_FREE_BLOCKS = 11,
+
+    FEMU_WINDOW_1S = 12,
+    FEMU_WINDOW_100MS = 13,
+    FEMU_WINDOW_2S = 14,
+    FEMU_WINDOW_10MS = 15,
+    FEMU_WINDOW_40MS = 16,
+    FEMU_WINDOW_200MS = 17,
+    FEMU_WINDOW_400MS = 18,
+
+};
+```
+Check out femu_flip_cmd function in nvme-core.c to see what they do
