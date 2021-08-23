@@ -62,12 +62,12 @@ At this point directory hierarchy should be like this:
 
 ```
 
-├── build.sh												 # Script to build IODA
+├── build.sh                        # Script to build IODA
 ├── images
 │   ├── download-ioda-vm-image.sh
-│   └── ioda.qcow2									 # IODA VM image
-├── README.md                        # README with detailed instructions
-├── rtk															 # Plotting toolkit
+│   └── ioda.qcow2                  # IODA VM image
+├── README.md                       # README with detailed instructions
+├── rtk                             # Plotting toolkit
 │   ├── all.sh
 │   ├── clear.sh
 │   ├── dat
@@ -75,13 +75,13 @@ At this point directory hierarchy should be like this:
 │   ├── plot
 │   ├── script
 │   └── w.txt
-├── run-vm.sh												 # Script to run IODA VM
+├── run-vm.sh                       # Script to run IODA VM
 ├── src
-│   ├── iodaFEMU                     # IODA-enhanced FEMU SSD controller
-│   └── iodaLinux									   # IODA-enhanced Linux kernel (v4.15)
+│   ├── iodaFEMU                    # IODA-enhanced FEMU SSD controller
+│   └── iodaLinux                   # IODA-enhanced Linux kernel (v4.15)
 └── utils
-    ├── iodaExp											 # Utilities to run IODA experiments in IODA VM (the VM already has it setup)
-    └── ioda-pkgdep.sh							 # Script to install IODA dependencies
+    ├── iodaExp                     # Utilities to run IODA experiments in IODA VM (the VM already has it setup)
+    └── ioda-pkgdep.sh              # Script to install IODA dependencies
 
 ```
 
