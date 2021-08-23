@@ -65,7 +65,7 @@ At this point directory hierarchy should be like this:
 ├── images
 │   ├── download-ioda-vm-image.sh
 │   └── ioda.qcow2                               # IODA VM image file
-├── ioda.sh                                      # Script to start IODA VM
+├── run-vm.sh                                    # Script to start IODA VM
 ├── rtk
 └── src                                          # Source code of iodaFEMU and iodaLinux
     ├── iodaFEMU
@@ -90,7 +90,7 @@ First, start IODA VM and enter the guest OS:
 
 ```
 cd ${IODA_AE_TOPDIR}
-./ioda.sh
+./run-vm.sh
 ```
 
 FEMU will start booting and keep printing output for about 30-60 seconds. Once
