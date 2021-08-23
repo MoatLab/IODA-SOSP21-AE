@@ -20,8 +20,8 @@ as the guest OS and manages a NVMe SSD exposed by ``iodaFEMU``.
   ``IOD_2``, ``IOD_3``, ``IODA``, and ``Ideal``)
 
 - To simplify the evaluation process, we **encourage** you to use our
-  pre-compiled Linux kernel bzIImage of ``iodaLinux`` (the default Linux kernel
-  used with ``iodaVM``) to save time. 
+  pre-compiled Linux kernel ``bzImage`` of ``iodaLinux`` (already shipped
+  with``iodaVM``) to save time. 
 
 - All the experiments are done on ``Emulab D430`` nodes, tested under ``Ubuntu
   16.04.1 LTS, GCC: 5.4.0`` and ``Ubuntu 20.04 LTS, GCC: 9.3.0`` (recommended).
@@ -37,11 +37,13 @@ following the detailed instructions below.**
 
 ### Detailed Steps
 
-0. Prepare the physical server: Setup an Emulab D430 server, ssh into it. If
-   you don't have Emulab/CloudLab access, please let us know on hotcrp and we
-   can help spin up a server under our account and provide you the access.
+#### Prepare the physical server
 
-1. Prepare the IODA environment
+Setup an Emulab D430 server, ssh into it. If you don't have Emulab/CloudLab
+access, please let us know on hotcrp and we can help spin up a server under our
+account and provide you the access.
+
+#### Prepare the IODA environment
 
 Clone the repo and download IODA VM image file: 
 
@@ -71,7 +73,7 @@ At this point directory hierarchy should be like this:
 ```
 
 
-2. Build IODA
+#### Build IODA
 
 ```
 $ sudo ./build.sh
@@ -82,7 +84,7 @@ The compiled binaries are:
 - iodaFEMU: ``src/iodaFEMU/build-femu/x86_64-softmmu/qemu-system-x86_64``
 - iodaLinux: ``src/iodaLinux/arch/x86/boot/bzImage``
 
-3. Running the Experiments
+#### Run the Experiments
 
 1) Start IODA VM and enter the guest OS:
 
